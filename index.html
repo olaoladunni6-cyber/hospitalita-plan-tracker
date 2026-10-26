@@ -6,220 +6,226 @@
 <title>Hospitalita COS Plan Tracker & Daily Brief</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-  .status-New { background-color: #D6EAF8; }
-  .status-Old\/Ongoing { background-color: #FCF3CF; }
-  .status-Progress\ Made { background-color: #D5F5E3; }
-  .status-Aborted { background-color: #F5B7B1; }
-  .status-New\ Direction { background-color: #FDEBD0; }
-  .status-Completed { background-color: #ABEBC6; }
-  .tl-Green { background-color: #ABEBC6; color: #145A32; }
-  .tl-Amber { background-color: #FCF3CF; color: #7D6608; }
-  .tl-Red { background-color: #F5B7B1; color: #7B241C; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  .gradient-header { background: linear-gradient(135deg, #1F4E79 0%, #2E86AB 50%, #1F4E79 100%); }
+  .card-hover { transition: all 0.2s ease; }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+  .status-New { background: #E3F2FD; color: #1565C0; }
+  .status-Old\/Ongoing { background: #FFF8E1; color: #F57F17; }
+  .status-Progress\ Made { background: #E8F5E9; color: #2E7D32; }
+  .status-Aborted { background: #FFEBEE; color: #C62828; }
+  .status-New\ Direction { background: #FFF3E0; color: #EF6C00; }
+  .status-Completed { background: #E8F5E9; color: #1B5E20; }
+  .tl-Green { background: #C8E6C9; color: #1B5E20; }
+  .tl-Amber { background: #FFF9C4; color: #F57F17; }
+  .tl-Red { background: #FFCDD2; color: #B71C1C; }
   .table-container { overflow-x: auto; }
-  .brief-box { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.875rem; }
+  .brief-box { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9rem; line-height: 1.6; }
+  .tab-active { background: #FFC000; color: #1F4E79; border-radius: 9999px; }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-800">
-  <header class="bg-[#1F4E79] text-white shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row md:items-center md:justify-between">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-gray-800">
+  <header class="gradient-header text-white shadow-xl">
+    <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold">HOSPITALITA GROUP</h1>
-        <p class="text-[#FFC000] text-lg font-medium">COS Plan Tracker & Exception-Based Daily Brief</p>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight">HOSPITALITA GROUP</h1>
+        <p class="text-[#FFC000] text-xl font-semibold mt-1">COS Plan Tracker & Exception-Based Daily Brief</p>
       </div>
-      <div class="mt-4 md:mt-0 text-sm opacity-90">
-        Protect CEO Focus • Decisions • Exceptions • Recommendations
+      <div class="mt-6 md:mt-0 text-right">
+        <div class="text-sm opacity-90">Protect CEO Focus</div>
+        <div class="text-lg font-medium">Decisions • Exceptions • Recommendations</div>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-6">
-    <div class="flex border-b mb-6 overflow-x-auto">
-      <button onclick="showTab('tracker')" id="tab-tracker" class="tab-btn px-5 py-3 font-semibold border-b-2 border-[#1F4E79] text-[#1F4E79] whitespace-nowrap">Plan Tracker</button>
-      <button onclick="showTab('summary')" id="tab-summary" class="tab-btn px-5 py-3 font-semibold text-gray-500 hover:text-[#1F4E79] whitespace-nowrap">Status Summary</button>
-      <button onclick="showTab('brief')" id="tab-brief" class="tab-btn px-5 py-3 font-semibold text-gray-500 hover:text-[#1F4E79] whitespace-nowrap">COS Daily Brief</button>
-      <button onclick="showTab('add')" id="tab-add" class="tab-btn px-5 py-3 font-semibold text-gray-500 hover:text-[#1F4E79] whitespace-nowrap">+ Add / Update Plan</button>
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-wrap gap-2 mb-8 justify-center">
+      <button onclick="showTab('tracker')" id="tab-tracker" class="tab-btn tab-active px-6 py-3 font-semibold text-sm shadow-sm">Plan Tracker</button>
+      <button onclick="showTab('summary')" id="tab-summary" class="tab-btn bg-white px-6 py-3 font-semibold text-sm text-gray-600 hover:bg-gray-100 shadow-sm rounded-full">Status Summary</button>
+      <button onclick="showTab('brief')" id="tab-brief" class="tab-btn bg-white px-6 py-3 font-semibold text-sm text-gray-600 hover:bg-gray-100 shadow-sm rounded-full">COS Daily Brief</button>
+      <button onclick="showTab('add')" id="tab-add" class="tab-btn bg-white px-6 py-3 font-semibold text-sm text-gray-600 hover:bg-gray-100 shadow-sm rounded-full">+ Add / Update Plan</button>
     </div>
 
-    <!-- Add / Edit Form -->
-    <section id="panel-add" class="hidden bg-white rounded-xl shadow p-6 mb-6">
-      <h2 class="text-xl font-bold text-[#1F4E79] mb-4">Add or Update Plan / Initiative</h2>
-      <form id="planForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">Plan ID</label>
-          <input type="text" id="planId" class="w-full border rounded px-3 py-2" placeholder="e.g. HOSP-001" required>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Date Entered</label>
-          <input type="date" id="dateEntered" class="w-full border rounded px-3 py-2" required>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Business / Area</label>
-          <select id="business" class="w-full border rounded px-3 py-2" required>
-            <option value="">Select...</option>
-            <option>Posh Hotels - Ikeja</option>
-            <option>Posh Hotels - VI</option>
-            <option>Gold Privilege Network</option>
-            <option>Streetfood NG</option>
-            <option>Fondi Investments</option>
-            <option>Inovacao Ltd</option>
-            <option>Hospitalita Group</option>
-            <option>Creatif Entertainments</option>
-            <option>Property Scope</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Owner</label>
-          <input type="text" id="owner" class="w-full border rounded px-3 py-2" placeholder="Responsible person">
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Plan / Initiative Description</label>
-          <textarea id="description" rows="2" class="w-full border rounded px-3 py-2" required></textarea>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Original Intent / Objective</label>
-          <textarea id="intent" rows="2" class="w-full border rounded px-3 py-2"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Priority</label>
-          <select id="priority" class="w-full border rounded px-3 py-2">
-            <option>High</option>
-            <option>Medium</option>
-            <option>Low</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Status</label>
-          <select id="status" class="w-full border rounded px-3 py-2">
-            <option>New</option>
-            <option>Old/Ongoing</option>
-            <option>Progress Made</option>
-            <option>Aborted</option>
-            <option>New Direction</option>
-            <option>Completed</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Traffic Light</label>
-          <select id="trafficLight" class="w-full border rounded px-3 py-2">
-            <option>Green</option>
-            <option>Amber</option>
-            <option>Red</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Needs CEO Decision?</label>
-          <select id="needsDecision" class="w-full border rounded px-3 py-2">
-            <option value="false">No</option>
-            <option value="true">Yes</option>
-          </select>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Progress Notes / Update</label>
-          <textarea id="notes" rows="2" class="w-full border rounded px-3 py-2"></textarea>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Next Action / New Direction</label>
-          <textarea id="nextAction" rows="2" class="w-full border rounded px-3 py-2"></textarea>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Context (for exceptions / decisions)</label>
-          <textarea id="context" rows="2" class="w-full border rounded px-3 py-2" placeholder="Why this matters and what has already been tried"></textarea>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Options</label>
-          <textarea id="options" rows="2" class="w-full border rounded px-3 py-2" placeholder="Option A / Option B / Do nothing"></textarea>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Recommendation</label>
-          <textarea id="recommendation" rows="2" class="w-full border rounded px-3 py-2" placeholder="Recommended path and why"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Target Date</label>
-          <input type="date" id="targetDate" class="w-full border rounded px-3 py-2">
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">% Complete</label>
-          <input type="number" id="percent" min="0" max="100" class="w-full border rounded px-3 py-2" value="0">
-        </div>
-        <div class="md:col-span-2 flex gap-3 pt-2">
-          <button type="submit" class="bg-[#1F4E79] text-white px-6 py-2 rounded font-medium hover:bg-[#163a5c]">Save Plan</button>
-          <button type="button" onclick="resetForm()" class="bg-gray-200 px-6 py-2 rounded">Clear</button>
-        </div>
-      </form>
+    <section id="panel-add" class="hidden">
+      <div class="bg-white rounded-2xl shadow-xl p-8 card-hover">
+        <h2 class="text-2xl font-bold text-[#1F4E79] mb-6">Add or Update Plan / Initiative</h2>
+        <form id="planForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Plan ID</label>
+            <input type="text" id="planId" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1F4E79] focus:border-transparent" placeholder="e.g. HOSP-001" required>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Date Entered</label>
+            <input type="date" id="dateEntered" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1F4E79]" required>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Business / Area</label>
+            <select id="business" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1F4E79]" required>
+              <option value="">Select...</option>
+              <option>Posh Hotels - Ikeja</option>
+              <option>Posh Hotels - VI</option>
+              <option>Gold Privilege Network</option>
+              <option>Streetfood NG</option>
+              <option>Fondi Investments</option>
+              <option>Inovacao Ltd</option>
+              <option>Hospitalita Group</option>
+              <option>Creatif Entertainments</option>
+              <option>Property Scope</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Owner</label>
+            <input type="text" id="owner" class="w-full border border-gray-300 rounded-lg px-4 py-3" placeholder="Responsible person">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Plan / Initiative Description</label>
+            <textarea id="description" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-3" required></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Original Intent / Objective</label>
+            <textarea id="intent" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-3"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Priority</label>
+            <select id="priority" class="w-full border border-gray-300 rounded-lg px-4 py-3">
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+            <select id="status" class="w-full border border-gray-300 rounded-lg px-4 py-3">
+              <option>New</option>
+              <option>Old/Ongoing</option>
+              <option>Progress Made</option>
+              <option>Aborted</option>
+              <option>New Direction</option>
+              <option>Completed</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Traffic Light</label>
+            <select id="trafficLight" class="w-full border border-gray-300 rounded-lg px-4 py-3">
+              <option>Green</option>
+              <option>Amber</option>
+              <option>Red</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Needs CEO Decision?</label>
+            <select id="needsDecision" class="w-full border border-gray-300 rounded-lg px-4 py-3">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Progress Notes / Update</label>
+            <textarea id="notes" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-3"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Next Action / New Direction</label>
+            <textarea id="nextAction" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-3"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Context (for exceptions / decisions)</label>
+            <textarea id="context" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-3" placeholder="Why this matters and what has already been tried"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Options</label>
+            <textarea id="options" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-3" placeholder="Option A / Option B / Do nothing"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Recommendation</label>
+            <textarea id="recommendation" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-3" placeholder="Recommended path and why"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Target Date</label>
+            <input type="date" id="targetDate" class="w-full border border-gray-300 rounded-lg px-4 py-3">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">% Complete</label>
+            <input type="number" id="percent" min="0" max="100" class="w-full border border-gray-300 rounded-lg px-4 py-3" value="0">
+          </div>
+          <div class="md:col-span-2 flex gap-4 pt-4">
+            <button type="submit" class="bg-gradient-to-r from-[#1F4E79] to-[#2E86AB] text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:shadow-lg">Save Plan</button>
+            <button type="button" onclick="resetForm()" class="bg-gray-100 text-gray-700 px-8 py-3 rounded-lg font-semibold">Clear</button>
+          </div>
+        </form>
+      </div>
     </section>
 
-    <!-- Tracker -->
-    <section id="panel-tracker" class="bg-white rounded-xl shadow">
-      <div class="p-4 border-b flex flex-wrap gap-3 items-center justify-between">
-        <h2 class="text-xl font-bold text-[#1F4E79]">All Plans</h2>
-        <div class="flex gap-2 flex-wrap">
-          <input type="text" id="search" placeholder="Search plans..." class="border rounded px-3 py-2 text-sm" oninput="renderTable()">
-          <select id="filterStatus" class="border rounded px-3 py-2 text-sm" onchange="renderTable()">
-            <option value="">All Statuses</option>
-            <option>New</option>
-            <option>Old/Ongoing</option>
-            <option>Progress Made</option>
-            <option>Aborted</option>
-            <option>New Direction</option>
-            <option>Completed</option>
-          </select>
-          <select id="filterLight" class="border rounded px-3 py-2 text-sm" onchange="renderTable()">
-            <option value="">All Lights</option>
-            <option>Green</option>
-            <option>Amber</option>
-            <option>Red</option>
-          </select>
+    <section id="panel-tracker">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 border-b flex flex-wrap gap-4 items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50">
+          <h2 class="text-2xl font-bold text-[#1F4E79]">All Plans</h2>
+          <div class="flex gap-3 flex-wrap">
+            <input type="text" id="search" placeholder="Search plans..." class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-[#1F4E79]" oninput="renderTable()">
+            <select id="filterStatus" class="border border-gray-300 rounded-lg px-4 py-2 text-sm" onchange="renderTable()">
+              <option value="">All Statuses</option>
+              <option>New</option>
+              <option>Old/Ongoing</option>
+              <option>Progress Made</option>
+              <option>Aborted</option>
+              <option>New Direction</option>
+              <option>Completed</option>
+            </select>
+            <select id="filterLight" class="border border-gray-300 rounded-lg px-4 py-2 text-sm" onchange="renderTable()">
+              <option value="">All Lights</option>
+              <option>Green</option>
+              <option>Amber</option>
+              <option>Red</option>
+            </select>
+          </div>
         </div>
+        <div class="table-container">
+          <table class="w-full text-sm">
+            <thead class="bg-[#1F4E79] text-white">
+              <tr>
+                <th class="px-4 py-4 text-left font-semibold">ID</th>
+                <th class="px-4 py-4 text-left font-semibold">Business</th>
+                <th class="px-4 py-4 text-left font-semibold">Plan</th>
+                <th class="px-4 py-4 text-left font-semibold">Owner</th>
+                <th class="px-4 py-4 text-left font-semibold">Light</th>
+                <th class="px-4 py-4 text-left font-semibold">Status</th>
+                <th class="px-4 py-4 text-left font-semibold">Decision?</th>
+                <th class="px-4 py-4 text-left font-semibold">%</th>
+                <th class="px-4 py-4 text-left font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="p-12 text-center text-gray-500 hidden">No plans yet. Add your first plan.</div>
       </div>
-      <div class="table-container">
-        <table class="w-full text-sm">
-          <thead class="bg-[#1F4E79] text-white">
-            <tr>
-              <th class="px-3 py-3 text-left">ID</th>
-              <th class="px-3 py-3 text-left">Business</th>
-              <th class="px-3 py-3 text-left">Plan</th>
-              <th class="px-3 py-3 text-left">Owner</th>
-              <th class="px-3 py-3 text-left">Light</th>
-              <th class="px-3 py-3 text-left">Status</th>
-              <th class="px-3 py-3 text-left">Decision?</th>
-              <th class="px-3 py-3 text-left">%</th>
-              <th class="px-3 py-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-      <div id="emptyState" class="p-8 text-center text-gray-500 hidden">No plans yet. Add your first plan.</div>
     </section>
 
-    <!-- Summary -->
     <section id="panel-summary" class="hidden">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6" id="summaryCards"></div>
-      <div class="bg-white rounded-xl shadow p-6">
-        <h3 class="text-lg font-bold text-[#1F4E79] mb-4">Plans by Business Area</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8" id="summaryCards"></div>
+      <div class="bg-white rounded-2xl shadow-xl p-6">
+        <h3 class="text-xl font-bold text-[#1F4E79] mb-4">Plans by Business Area</h3>
         <div id="byBusiness" class="overflow-x-auto"></div>
       </div>
     </section>
 
-    <!-- COS Daily Brief -->
     <section id="panel-brief" class="hidden">
-      <div class="bg-white rounded-xl shadow p-6">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h2 class="text-xl font-bold text-[#1F4E79">Chief of Staff – End-of-Day Brief</h2>
-          <div class="flex gap-2">
-            <button onclick="generateBrief()" class="bg-[#1F4E79] text-white px-4 py-2 rounded text-sm font-medium">Generate / Refresh Brief</button>
-            <button onclick="copyBrief()" class="bg-[#FFC000] text-[#1F4E79] px-4 py-2 rounded text-sm font-medium">Copy to Clipboard</button>
+      <div class="bg-white rounded-2xl shadow-xl p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold text-[#1F4E79]">Chief of Staff – End-of-Day Brief</h2>
+          <div class="flex gap-3">
+            <button onclick="generateBrief()" class="bg-gradient-to-r from-[#1F4E79] to-[#2E86AB] text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow">Generate / Refresh Brief</button>
+            <button onclick="copyBrief()" class="bg-[#FFC000] text-[#1F4E79] px-5 py-2.5 rounded-lg text-sm font-semibold shadow">Copy to Clipboard</button>
           </div>
         </div>
-        <p class="text-sm text-gray-600 mb-4">Exception-based only. Decisions, material risks and slips. Context + options + recommendation. Readable in 2–3 minutes.</p>
-        <div id="briefOutput" class="brief-box bg-gray-50 border rounded-lg p-4 min-h-[200px]">Click “Generate / Refresh Brief” to create today’s note.</div>
+        <p class="text-sm text-gray-600 mb-6 bg-amber-50 border-l-4 border-[#FFC000] p-4 rounded">Exception-based only. Decisions, material risks and slips. Always include context + options + recommendation. Readable in 2–3 minutes.</p>
+        <div id="briefOutput" class="brief-box bg-slate-50 border border-slate-200 rounded-xl p-6 min-h-[240px] text-slate-800">Click “Generate / Refresh Brief” to create today’s note.</div>
       </div>
     </section>
   </main>
 
-  <footer class="text-center text-xs text-gray-500 py-6">
+  <footer class="text-center text-xs text-gray-500 py-8">
     Hospitalita Group • COS Plan Tracker & Daily Brief • Data stored locally in your browser
   </footer>
 
@@ -283,12 +289,12 @@ function showTab(tab) {
     document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
   });
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.remove('border-b-2','border-[#1F4E79]','text-[#1F4E79]');
-    btn.classList.add('text-gray-500');
+    btn.classList.remove('tab-active');
+    btn.classList.add('bg-white', 'text-gray-600');
   });
   const active = document.getElementById('tab-' + tab);
-  active.classList.add('border-b-2','border-[#1F4E79]','text-[#1F4E79]');
-  active.classList.remove('text-gray-500');
+  active.classList.add('tab-active');
+  active.classList.remove('bg-white', 'text-gray-600');
   if (tab === 'summary') renderSummary();
   if (tab === 'tracker') renderTable();
   if (tab === 'brief') generateBrief();
@@ -399,19 +405,19 @@ function renderTable() {
     const statusClass = 'status-' + (p.status || '').replace(/\//g, '\\/').replace(/ /g, '\\ ');
     const tlClass = 'tl-' + (p.trafficLight || 'Green');
     const tr = document.createElement('tr');
-    tr.className = 'border-b hover:bg-gray-50';
+    tr.className = 'hover:bg-blue-50 transition-colors';
     tr.innerHTML = `
-      <td class="px-3 py-3 font-medium">${p.id || ''}</td>
-      <td class="px-3 py-3">${p.business || ''}</td>
-      <td class="px-3 py-3 max-w-xs">${p.description || ''}</td>
-      <td class="px-3 py-3">${p.owner || ''}</td>
-      <td class="px-3 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${tlClass}">${p.trafficLight || ''}</span></td>
-      <td class="px-3 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${statusClass}">${p.status || ''}</span></td>
-      <td class="px-3 py-3">${p.needsDecision ? '<span class="text-red-600 font-medium">Yes</span>' : 'No'}</td>
-      <td class="px-3 py-3">${p.percent || 0}%</td>
-      <td class="px-3 py-3 whitespace-nowrap">
-        <button onclick="editPlan('${p.id}')" class="text-blue-600 hover:underline text-xs mr-2">Edit</button>
-        <button onclick="deletePlan('${p.id}')" class="text-red-600 hover:underline text-xs">Delete</button>
+      <td class="px-4 py-4 font-medium text-[#1F4E79]">${p.id || ''}</td>
+      <td class="px-4 py-4">${p.business || ''}</td>
+      <td class="px-4 py-4 max-w-xs">${p.description || ''}</td>
+      <td class="px-4 py-4">${p.owner || ''}</td>
+      <td class="px-4 py-4"><span class="px-3 py-1 rounded-full text-xs font-semibold ${tlClass}">${p.trafficLight || ''}</span></td>
+      <td class="px-4 py-4"><span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">${p.status || ''}</span></td>
+      <td class="px-4 py-4">${p.needsDecision ? '<span class="text-red-600 font-semibold">Yes</span>' : '<span class="text-gray-500">No</span>'}</td>
+      <td class="px-4 py-4 font-medium">${p.percent || 0}%</td>
+      <td class="px-4 py-4 whitespace-nowrap">
+        <button onclick="editPlan('${p.id}')" class="text-blue-600 hover:underline text-xs mr-3 font-medium">Edit</button>
+        <button onclick="deletePlan('${p.id}')" class="text-red-600 hover:underline text-xs font-medium">Delete</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -422,7 +428,7 @@ function renderSummary() {
   const statuses = ['New', 'Old/Ongoing', 'Progress Made', 'Aborted', 'New Direction', 'Completed'];
   const colors = {
     'New': 'bg-blue-100 text-blue-800',
-    'Old/Ongoing': 'bg-yellow-100 text-yellow-800',
+    'Old/Ongoing': 'bg-amber-100 text-amber-800',
     'Progress Made': 'bg-green-100 text-green-800',
     'Aborted': 'bg-red-100 text-red-800',
     'New Direction': 'bg-orange-100 text-orange-800',
@@ -434,19 +440,19 @@ function renderSummary() {
   statuses.forEach(s => {
     const count = plans.filter(p => p.status === s).length;
     const card = document.createElement('div');
-    card.className = `rounded-lg p-4 text-center ${colors[s] || 'bg-gray-100'}`;
-    card.innerHTML = `<div class="text-2xl font-bold">${count}</div><div class="text-sm">${s}</div>`;
+    card.className = `rounded-2xl p-5 text-center shadow-md card-hover ${colors[s] || 'bg-gray-100'}`;
+    card.innerHTML = `<div class="text-3xl font-bold">${count}</div><div class="text-sm font-medium mt-1">${s}</div>`;
     cards.appendChild(card);
   });
 
   const businesses = [...new Set(plans.map(p => p.business).filter(Boolean))];
-  let html = '<table class="w-full text-sm"><thead><tr class="bg-gray-100"><th class="px-3 py-2 text-left">Business</th><th class="px-3 py-2">Total</th><th class="px-3 py-2">Completed</th><th class="px-3 py-2">In Progress</th><th class="px-3 py-2">Aborted</th></tr></thead><tbody>';
+  let html = '<table class="w-full text-sm"><thead><tr class="bg-gray-100"><th class="px-4 py-3 text-left font-semibold">Business</th><th class="px-4 py-3 font-semibold">Total</th><th class="px-4 py-3 font-semibold">Completed</th><th class="px-4 py-3 font-semibold">In Progress</th><th class="px-4 py-3 font-semibold">Aborted</th></tr></thead><tbody class="divide-y">';
   businesses.forEach(b => {
     const total = plans.filter(p => p.business === b).length;
     const completed = plans.filter(p => p.business === b && p.status === 'Completed').length;
     const aborted = plans.filter(p => p.business === b && p.status === 'Aborted').length;
     const inProgress = total - completed - aborted;
-    html += `<tr class="border-b"><td class="px-3 py-2">${b}</td><td class="px-3 py-2 text-center">${total}</td><td class="px-3 py-2 text-center">${completed}</td><td class="px-3 py-2 text-center">${inProgress}</td><td class="px-3 py-2 text-center">${aborted}</td></tr>`;
+    html += `<tr class="hover:bg-gray-50"><td class="px-4 py-3">${b}</td><td class="px-4 py-3 text-center font-medium">${total}</td><td class="px-4 py-3 text-center">${completed}</td><td class="px-4 py-3 text-center">${inProgress}</td><td class="px-4 py-3 text-center">${aborted}</td></tr>`;
   });
   html += '</tbody></table>';
   document.getElementById('byBusiness').innerHTML = html || '<p class="text-gray-500">No data yet.</p>';
