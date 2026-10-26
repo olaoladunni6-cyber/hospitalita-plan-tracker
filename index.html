@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hospitalita Daily Plan Tracker</title>
+<title>Hospitalita COS Plan Tracker & Daily Brief</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
@@ -13,34 +13,37 @@
   .status-Aborted { background-color: #F5B7B1; }
   .status-New\ Direction { background-color: #FDEBD0; }
   .status-Completed { background-color: #ABEBC6; }
+  .tl-Green { background-color: #ABEBC6; color: #145A32; }
+  .tl-Amber { background-color: #FCF3CF; color: #7D6608; }
+  .tl-Red { background-color: #F5B7B1; color: #7B241C; }
   .table-container { overflow-x: auto; }
+  .brief-box { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.875rem; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
-  <!-- Header -->
   <header class="bg-[#1F4E79] text-white shadow-lg">
     <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row md:items-center md:justify-between">
       <div>
         <h1 class="text-2xl md:text-3xl font-bold">HOSPITALITA GROUP</h1>
-        <p class="text-[#FFC000] text-lg font-medium">Daily Plan Management & Monitoring Tracker</p>
+        <p class="text-[#FFC000] text-lg font-medium">COS Plan Tracker & Exception-Based Daily Brief</p>
       </div>
       <div class="mt-4 md:mt-0 text-sm opacity-90">
-        Capture • Monitor • Complete
+        Protect CEO Focus • Decisions • Exceptions • Recommendations
       </div>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-6">
-    <!-- Tabs -->
-    <div class="flex border-b mb-6">
-      <button onclick="showTab('tracker')" id="tab-tracker" class="tab-btn px-6 py-3 font-semibold border-b-2 border-[#1F4E79] text-[#1F4E79]">Plan Tracker</button>
-      <button onclick="showTab('summary')" id="tab-summary" class="tab-btn px-6 py-3 font-semibold text-gray-500 hover:text-[#1F4E79]">Status Summary</button>
-      <button onclick="showTab('add')" id="tab-add" class="tab-btn px-6 py-3 font-semibold text-gray-500 hover:text-[#1F4E79]">+ Add New Plan</button>
+    <div class="flex border-b mb-6 overflow-x-auto">
+      <button onclick="showTab('tracker')" id="tab-tracker" class="tab-btn px-5 py-3 font-semibold border-b-2 border-[#1F4E79] text-[#1F4E79] whitespace-nowrap">Plan Tracker</button>
+      <button onclick="showTab('summary')" id="tab-summary" class="tab-btn px-5 py-3 font-semibold text-gray-500 hover:text-[#1F4E79] whitespace-nowrap">Status Summary</button>
+      <button onclick="showTab('brief')" id="tab-brief" class="tab-btn px-5 py-3 font-semibold text-gray-500 hover:text-[#1F4E79] whitespace-nowrap">COS Daily Brief</button>
+      <button onclick="showTab('add')" id="tab-add" class="tab-btn px-5 py-3 font-semibold text-gray-500 hover:text-[#1F4E79] whitespace-nowrap">+ Add / Update Plan</button>
     </div>
 
-    <!-- Add New Plan Form -->
+    <!-- Add / Edit Form -->
     <section id="panel-add" class="hidden bg-white rounded-xl shadow p-6 mb-6">
-      <h2 class="text-xl font-bold text-[#1F4E79] mb-4">Add New Plan / Initiative</h2>
+      <h2 class="text-xl font-bold text-[#1F4E79] mb-4">Add or Update Plan / Initiative</h2>
       <form id="planForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium mb-1">Plan ID</label>
@@ -97,6 +100,21 @@
             <option>Completed</option>
           </select>
         </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Traffic Light</label>
+          <select id="trafficLight" class="w-full border rounded px-3 py-2">
+            <option>Green</option>
+            <option>Amber</option>
+            <option>Red</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Needs CEO Decision?</label>
+          <select id="needsDecision" class="w-full border rounded px-3 py-2">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </div>
         <div class="md:col-span-2">
           <label class="block text-sm font-medium mb-1">Progress Notes / Update</label>
           <textarea id="notes" rows="2" class="w-full border rounded px-3 py-2"></textarea>
@@ -104,6 +122,18 @@
         <div class="md:col-span-2">
           <label class="block text-sm font-medium mb-1">Next Action / New Direction</label>
           <textarea id="nextAction" rows="2" class="w-full border rounded px-3 py-2"></textarea>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">Context (for exceptions / decisions)</label>
+          <textarea id="context" rows="2" class="w-full border rounded px-3 py-2" placeholder="Why this matters and what has already been tried"></textarea>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">Options</label>
+          <textarea id="options" rows="2" class="w-full border rounded px-3 py-2" placeholder="Option A / Option B / Do nothing"></textarea>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">Recommendation</label>
+          <textarea id="recommendation" rows="2" class="w-full border rounded px-3 py-2" placeholder="Recommended path and why"></textarea>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Target Date</label>
@@ -120,11 +150,11 @@
       </form>
     </section>
 
-    <!-- Tracker Table -->
+    <!-- Tracker -->
     <section id="panel-tracker" class="bg-white rounded-xl shadow">
       <div class="p-4 border-b flex flex-wrap gap-3 items-center justify-between">
         <h2 class="text-xl font-bold text-[#1F4E79]">All Plans</h2>
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
           <input type="text" id="search" placeholder="Search plans..." class="border rounded px-3 py-2 text-sm" oninput="renderTable()">
           <select id="filterStatus" class="border rounded px-3 py-2 text-sm" onchange="renderTable()">
             <option value="">All Statuses</option>
@@ -135,6 +165,12 @@
             <option>New Direction</option>
             <option>Completed</option>
           </select>
+          <select id="filterLight" class="border rounded px-3 py-2 text-sm" onchange="renderTable()">
+            <option value="">All Lights</option>
+            <option>Green</option>
+            <option>Amber</option>
+            <option>Red</option>
+          </select>
         </div>
       </div>
       <div class="table-container">
@@ -143,19 +179,19 @@
             <tr>
               <th class="px-3 py-3 text-left">ID</th>
               <th class="px-3 py-3 text-left">Business</th>
-              <th class="px-3 py-3 text-left">Plan Description</th>
+              <th class="px-3 py-3 text-left">Plan</th>
               <th class="px-3 py-3 text-left">Owner</th>
-              <th class="px-3 py-3 text-left">Priority</th>
+              <th class="px-3 py-3 text-left">Light</th>
               <th class="px-3 py-3 text-left">Status</th>
-              <th class="px-3 py-3 text-left">% </th>
-              <th class="px-3 py-3 text-left">Target</th>
+              <th class="px-3 py-3 text-left">Decision?</th>
+              <th class="px-3 py-3 text-left">%</th>
               <th class="px-3 py-3 text-left">Actions</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
         </table>
       </div>
-      <div id="emptyState" class="p-8 text-center text-gray-500 hidden">No plans yet. Add your first plan above.</div>
+      <div id="emptyState" class="p-8 text-center text-gray-500 hidden">No plans yet. Add your first plan.</div>
     </section>
 
     <!-- Summary -->
@@ -166,14 +202,29 @@
         <div id="byBusiness" class="overflow-x-auto"></div>
       </div>
     </section>
+
+    <!-- COS Daily Brief -->
+    <section id="panel-brief" class="hidden">
+      <div class="bg-white rounded-xl shadow p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <h2 class="text-xl font-bold text-[#1F4E79">Chief of Staff – End-of-Day Brief</h2>
+          <div class="flex gap-2">
+            <button onclick="generateBrief()" class="bg-[#1F4E79] text-white px-4 py-2 rounded text-sm font-medium">Generate / Refresh Brief</button>
+            <button onclick="copyBrief()" class="bg-[#FFC000] text-[#1F4E79] px-4 py-2 rounded text-sm font-medium">Copy to Clipboard</button>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-4">Exception-based only. Decisions, material risks and slips. Context + options + recommendation. Readable in 2–3 minutes.</p>
+        <div id="briefOutput" class="brief-box bg-gray-50 border rounded-lg p-4 min-h-[200px]">Click “Generate / Refresh Brief” to create today’s note.</div>
+      </div>
+    </section>
   </main>
 
   <footer class="text-center text-xs text-gray-500 py-6">
-    Hospitalita Group • Daily Plan Tracker • Data stored locally in your browser
+    Hospitalita Group • COS Plan Tracker & Daily Brief • Data stored locally in your browser
   </footer>
 
 <script>
-const STORAGE_KEY = 'hospitalita_plans_v1';
+const STORAGE_KEY = 'hospitalita_plans_v2';
 let plans = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let editingId = null;
 
@@ -188,11 +239,15 @@ if (plans.length === 0) {
       owner: 'Ops Manager',
       priority: 'High',
       status: 'Progress Made',
+      trafficLight: 'Amber',
+      needsDecision: false,
       notes: 'Package pricing approved; marketing assets in design',
       nextAction: 'Launch promo campaign by 1 Nov',
+      context: '',
+      options: '',
+      recommendation: '',
       lastUpdated: '2026-10-26',
       targetDate: '2026-12-15',
-      actualCompletion: '',
       percent: 40
     },
     {
@@ -204,11 +259,15 @@ if (plans.length === 0) {
       owner: 'Membership Lead',
       priority: 'High',
       status: 'New Direction',
+      trafficLight: 'Amber',
+      needsDecision: true,
       notes: 'Shifted focus to diaspora professionals via LinkedIn + events',
       nextAction: 'Host first virtual networking session',
+      context: 'Local outreach under-performing; diaspora segment showing higher engagement.',
+      options: '1. Continue local events. 2. Pivot fully to virtual diaspora sessions. 3. Hybrid.',
+      recommendation: 'Recommend hybrid with heavier diaspora weighting. Approve first virtual session this week.',
       lastUpdated: '2026-10-25',
       targetDate: '2026-12-31',
-      actualCompletion: '',
       percent: 25
     }
   ];
@@ -220,17 +279,19 @@ function savePlans() {
 }
 
 function showTab(tab) {
-  document.getElementById('panel-tracker').classList.toggle('hidden', tab !== 'tracker');
-  document.getElementById('panel-summary').classList.toggle('hidden', tab !== 'summary');
-  document.getElementById('panel-add').classList.toggle('hidden', tab !== 'add');
+  ['tracker','summary','brief','add'].forEach(t => {
+    document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
+  });
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.remove('border-b-2', 'border-[#1F4E79]', 'text-[#1F4E79]');
+    btn.classList.remove('border-b-2','border-[#1F4E79]','text-[#1F4E79]');
     btn.classList.add('text-gray-500');
   });
-  document.getElementById('tab-' + tab).classList.add('border-b-2', 'border-[#1F4E79]', 'text-[#1F4E79]');
-  document.getElementById('tab-' + tab).classList.remove('text-gray-500');
+  const active = document.getElementById('tab-' + tab);
+  active.classList.add('border-b-2','border-[#1F4E79]','text-[#1F4E79]');
+  active.classList.remove('text-gray-500');
   if (tab === 'summary') renderSummary();
   if (tab === 'tracker') renderTable();
+  if (tab === 'brief') generateBrief();
 }
 
 document.getElementById('planForm').addEventListener('submit', function(e) {
@@ -244,11 +305,15 @@ document.getElementById('planForm').addEventListener('submit', function(e) {
     owner: document.getElementById('owner').value.trim(),
     priority: document.getElementById('priority').value,
     status: document.getElementById('status').value,
+    trafficLight: document.getElementById('trafficLight').value,
+    needsDecision: document.getElementById('needsDecision').value === 'true',
     notes: document.getElementById('notes').value.trim(),
     nextAction: document.getElementById('nextAction').value.trim(),
+    context: document.getElementById('context').value.trim(),
+    options: document.getElementById('options').value.trim(),
+    recommendation: document.getElementById('recommendation').value.trim(),
     lastUpdated: new Date().toISOString().split('T')[0],
     targetDate: document.getElementById('targetDate').value,
-    actualCompletion: '',
     percent: Number(document.getElementById('percent').value) || 0
   };
 
@@ -273,6 +338,8 @@ function resetForm() {
   document.getElementById('planForm').reset();
   document.getElementById('percent').value = 0;
   document.getElementById('dateEntered').value = new Date().toISOString().split('T')[0];
+  document.getElementById('trafficLight').value = 'Green';
+  document.getElementById('needsDecision').value = 'false';
   editingId = null;
 }
 
@@ -288,8 +355,13 @@ function editPlan(id) {
   document.getElementById('owner').value = plan.owner || '';
   document.getElementById('priority').value = plan.priority || 'Medium';
   document.getElementById('status').value = plan.status || 'New';
+  document.getElementById('trafficLight').value = plan.trafficLight || 'Green';
+  document.getElementById('needsDecision').value = plan.needsDecision ? 'true' : 'false';
   document.getElementById('notes').value = plan.notes || '';
   document.getElementById('nextAction').value = plan.nextAction || '';
+  document.getElementById('context').value = plan.context || '';
+  document.getElementById('options').value = plan.options || '';
+  document.getElementById('recommendation').value = plan.recommendation || '';
   document.getElementById('targetDate').value = plan.targetDate || '';
   document.getElementById('percent').value = plan.percent || 0;
   showTab('add');
@@ -306,6 +378,7 @@ function deletePlan(id) {
 function renderTable() {
   const search = (document.getElementById('search').value || '').toLowerCase();
   const filter = document.getElementById('filterStatus').value;
+  const lightFilter = document.getElementById('filterLight').value;
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
 
@@ -316,13 +389,15 @@ function renderTable() {
       (p.owner || '').toLowerCase().includes(search) ||
       (p.id || '').toLowerCase().includes(search);
     const matchesFilter = !filter || p.status === filter;
-    return matchesSearch && matchesFilter;
+    const matchesLight = !lightFilter || p.trafficLight === lightFilter;
+    return matchesSearch && matchesFilter && matchesLight;
   });
 
   document.getElementById('emptyState').classList.toggle('hidden', filtered.length > 0);
 
   filtered.forEach(p => {
     const statusClass = 'status-' + (p.status || '').replace(/\//g, '\\/').replace(/ /g, '\\ ');
+    const tlClass = 'tl-' + (p.trafficLight || 'Green');
     const tr = document.createElement('tr');
     tr.className = 'border-b hover:bg-gray-50';
     tr.innerHTML = `
@@ -330,10 +405,10 @@ function renderTable() {
       <td class="px-3 py-3">${p.business || ''}</td>
       <td class="px-3 py-3 max-w-xs">${p.description || ''}</td>
       <td class="px-3 py-3">${p.owner || ''}</td>
-      <td class="px-3 py-3">${p.priority || ''}</td>
+      <td class="px-3 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${tlClass}">${p.trafficLight || ''}</span></td>
       <td class="px-3 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${statusClass}">${p.status || ''}</span></td>
+      <td class="px-3 py-3">${p.needsDecision ? '<span class="text-red-600 font-medium">Yes</span>' : 'No'}</td>
       <td class="px-3 py-3">${p.percent || 0}%</td>
-      <td class="px-3 py-3">${p.targetDate || ''}</td>
       <td class="px-3 py-3 whitespace-nowrap">
         <button onclick="editPlan('${p.id}')" class="text-blue-600 hover:underline text-xs mr-2">Edit</button>
         <button onclick="deletePlan('${p.id}')" class="text-red-600 hover:underline text-xs">Delete</button>
@@ -375,6 +450,79 @@ function renderSummary() {
   });
   html += '</tbody></table>';
   document.getElementById('byBusiness').innerHTML = html || '<p class="text-gray-500">No data yet.</p>';
+}
+
+function generateBrief() {
+  const today = new Date().toISOString().split('T')[0];
+  const exceptions = plans.filter(p => 
+    p.trafficLight === 'Red' || 
+    p.trafficLight === 'Amber' || 
+    p.needsDecision || 
+    p.status === 'Aborted' || 
+    p.status === 'New Direction'
+  );
+
+  const decisions = plans.filter(p => p.needsDecision);
+  const progressed = plans.filter(p => p.status === 'Progress Made' || p.status === 'Completed');
+  const tomorrowFocus = plans.filter(p => p.priority === 'High' && p.status !== 'Completed' && p.status !== 'Aborted').slice(0, 3);
+
+  let brief = `CHIEF OF STAFF – END-OF-DAY BRIEF\n`;
+  brief += `Date: ${today}\n`;
+  brief += `Hospitalita Group\n\n`;
+
+  brief += `PORTFOLIO SNAPSHOT (exceptions only)\n`;
+  if (exceptions.length === 0) {
+    brief += `• All tracked items on track. No material exceptions.\n`;
+  } else {
+    exceptions.forEach(p => {
+      brief += `• ${p.business} | ${p.id}: ${p.description} [${p.trafficLight}] – ${p.status}\n`;
+    });
+  }
+  brief += `\n`;
+
+  brief += `ACTIONS CLOSED / PROGRESSED TODAY\n`;
+  if (progressed.length === 0) {
+    brief += `• None recorded.\n`;
+  } else {
+    progressed.forEach(p => {
+      brief += `• ${p.id} (${p.business}): ${p.status} – ${p.notes || 'Updated'}\n`;
+    });
+  }
+  brief += `\n`;
+
+  brief += `ITEMS REQUIRING CEO DECISION / DIRECTION\n`;
+  if (decisions.length === 0) {
+    brief += `• None.\n`;
+  } else {
+    decisions.forEach(p => {
+      brief += `• ${p.id} – ${p.description}\n`;
+      brief += `  Context: ${p.context || '—'}\n`;
+      brief += `  Options: ${p.options || '—'}\n`;
+      brief += `  Recommendation: ${p.recommendation || '—'}\n\n`;
+    });
+  }
+
+  brief += `TOMORROW’S TOP PRIORITIES (CoS will drive)\n`;
+  if (tomorrowFocus.length === 0) {
+    brief += `• No high-priority open items.\n`;
+  } else {
+    tomorrowFocus.forEach((p, i) => {
+      brief += `${i+1}. ${p.id} – ${p.description} (${p.business})\n`;
+    });
+  }
+  brief += `\n`;
+  brief += `Notes: Full detail remains in the Plan Tracker. Weekly Pulse will consolidate open exceptions.`;
+
+  document.getElementById('briefOutput').textContent = brief;
+}
+
+function copyBrief() {
+  const text = document.getElementById('briefOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Brief copied to clipboard. Paste into email or message.');
+  }).catch(() => {
+    alert('Copy failed. Please select and copy manually.');
+  });
 }
 
 document.getElementById('dateEntered').value = new Date().toISOString().split('T')[0];
